@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Тест</title>
+    </head>
+    <body>
+        <h1>Тест</h1>
+        <div id="data"></div>
+        <div id="status"></div>
+        <div id="messages"></div>
+        <button id="start">Старт</button>
+        <button id="stop">Стоп</button>
+        <button id="__status">Статус</button>
+        <script>
+            let ws = new WebSocket("ws://" + window.location.host + window.location.pathname + "ws/")
+            ws.onmessage = function(event){
+                let data = document.getElementById("data")
+                let txt = document.createTextNode(event.data)
+                data.innerText = txt.data
+            }
+
+            let ws2 = new WebSocket("ws://" + window.location.host + window.location.pathname + "ws/status/")
+            ws2.onmessage = function(event){
+                let data = document.getElementById("status")
+                let txt = document.createTextNode(event.data)
+                data.innerText = txt.data
+            }
+
+            document.getElementById("start").addEventListener("click", start)
+            document.getElementById("stop").addEventListener("click", stop)
+            document.getElementById("__status").addEventListener("click", status)
+            function abstract_socket_func(url) {
+                fetch(window.location + url)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("messages").textContent = JSON.stringify(data, null, 2)
+                    })
+                    .catch(error => error)
+            }
+            function start() {
+                abstract_socket_func("start/")
+            }
+            function stop() {
+                abstract_socket_func("stop/")
+            }
+            function status() {
+                abstract_socket_func("status_check/")
+            }
+        </script>
+    </body> 
+</html>
